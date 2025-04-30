@@ -1,4 +1,4 @@
-# Tutorial06
+# WeatherAtSatitram
 ## run docker compose
 ```sh
 docker compose up
