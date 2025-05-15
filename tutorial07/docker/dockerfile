@@ -1,0 +1,24 @@
+FROM python:3.11-slim
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    curl \
+    software-properties-common \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Python packages including a specific version of lakefs-client
+# Using version 0.91.0 which should be compatible with lakeFS 1.7.0
+# Adding fsspec and s3fs for remote storage access
+RUN pip install --no-cache-dir streamlit pandas numpy plotly lakefs-client==0.91.0 fsspec s3fs pyarrow
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
+# Expose the port Streamlit will run on
+EXPOSE 8503
+
+# Command to run when the container starts
+CMD ["streamlit", "run", "app.py", "--server.port=8503", "--server.enableCORS=false"]

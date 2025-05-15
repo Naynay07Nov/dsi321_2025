@@ -73,6 +73,25 @@ services:
     # networks:
     #   - prefect-network
 
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: streamlit-app
+    ports:
+      - "8503:8503"
+    volumes:
+      - ./:/app
+    working_dir: /app/visualization
+    command: streamlit run app.py --server.port=8503 --server.enableCORS=false
+    depends_on:
+      - lakefs-dev
+    networks:
+      - default
+    restart: unless-stopped
+
+
 volumes:
   postgres_data:
 
