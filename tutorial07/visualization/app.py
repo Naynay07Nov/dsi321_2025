@@ -10,6 +10,8 @@ import os
 import io
 from datetime import datetime
 import pytz
+from sklearn.cluster import KMeans
+
 
 # Define Thailand timezone
 thai_tz = pytz.timezone('Asia/Bangkok')
@@ -161,7 +163,7 @@ def filter_data(df, location_col, selected_locations, date_range):
     
     return filtered_df
 
-# Function to create weather overview visualizations
+# == Function to create weather overview visualizations ==
 def show_weather_overview(filtered_df, location_col, selected_locations):
     st.header("Current Weather Metrics")
     
@@ -324,7 +326,7 @@ def show_weather_overview(filtered_df, location_col, selected_locations):
         
         st.plotly_chart(fig, use_container_width=True)
 
-# Function to show temperature trends
+# == Function to show temperature trends ==
 def show_temperature_trends(filtered_df):
     st.header("Temperature Trends Over Time")
     
@@ -588,6 +590,111 @@ def show_temperature_trends(filtered_df):
     else:
         st.warning("Temperature or timestamp data not available in the dataset.")
 
+# == Function to show raw data ==
+def show_data_table(filtered_df):
+    """Display the filtered data in a table format."""
+    st.header("📄 Collected Weather Data")
+    st.dataframe(filtered_df)
+
+# == Function to show ML assistant ==
+def show_clustering(filtered_df: pd.DataFrame):
+    """
+    Perform clustering on weather features from filtered_df,
+    predict cluster for latest data, and show summary + smart recommendation.
+
+    Args:
+        filtered_df (pd.DataFrame): DataFrame filtered by user selection (location, date, etc)
+    """
+    st.header("Current Weather Metrics")
+    
+    # Get the most recent data point
+    if 'timestamp' in filtered_df.columns:
+        latest_data = filtered_df.sort_values('timestamp').iloc[-1]
+    else:
+        latest_data = filtered_df.iloc[-1]
+    
+    # Create metrics display
+    col1, col2, col3, col4 = st.columns(4)
+    
+    # Temperature
+    if 'main.temp' in filtered_df.columns:
+        col1.metric("Temperature", f"{latest_data['main.temp']:.1f} °C")
+    elif 'temperature' in filtered_df.columns:
+        col1.metric("Temperature", f"{latest_data['temperature']:.1f} °C")
+    
+    # Humidity
+    if 'main.humidity' in filtered_df.columns:
+        col2.metric("Humidity", f"{latest_data['main.humidity']:.1f} %")
+    elif 'humidity' in filtered_df.columns:
+        col2.metric("Humidity", f"{latest_data['humidity']:.1f} %")
+    
+    # Wind Speed
+    if 'wind.speed' in filtered_df.columns:
+        col3.metric("Wind Speed", f"{latest_data['wind.speed']:.1f} m/s")
+    elif 'wind_speed' in filtered_df.columns:
+        col3.metric("Wind Speed", f"{latest_data['wind_speed']:.1f} m/s")
+    
+    # Precipitation
+    if 'precipitation' in filtered_df.columns:
+        col4.metric("Precipitation", f"{latest_data['precipitation']:.1f} mm")
+
+    # Check minimum data to avoid errors
+    if filtered_df.empty or len(filtered_df) < 5:
+        st.warning("ข้อมูลไม่เพียงพอสำหรับการวิเคราะห์ กรุณาเลือกช่วงเวลา หรือสถานที่อื่น")
+        return
+
+    # Select features for clustering
+    features = ['main.temp', 'main.humidity', 'wind.speed', 'precipitation']
+    X = filtered_df[features].copy()
+
+    # Clean any missing values (if any)
+    X = X.dropna()
+
+    # Fit KMeans clustering (3 clusters)
+    kmeans = KMeans(n_clusters=3, random_state=42)
+    kmeans.fit(X)
+
+    # Add cluster labels to filtered_df for visualization (optional)
+    filtered_df = filtered_df.loc[X.index].copy()
+    filtered_df['cluster'] = kmeans.labels_
+
+    # Cluster centers for interpretation
+    centers = kmeans.cluster_centers_
+
+    # Mapping clusters to human-readable descriptions & advices
+    # You can tune these after inspecting your cluster centers
+    advice_map = {
+        0: "ดื่มน้ำมาก ๆ หลีกเลี่ยงกิจกรรมกลางแจ้งช่วงเที่ยง",
+        1: "พกร่มและสวมเสื้อกันฝน ระวังวัตถุปลิว",
+        2: "สวมเสื้อผ้าอบอุ่น ดูแลผิวให้ชุ่มชื้น"
+    }
+
+    desc_map = {
+        0: "ร้อนและชื้น",
+        1: "ฝนตกและลมแรง",
+        2: "เย็นและแห้ง"
+    }
+
+    # Display cluster centers for user info
+    st.write("### รายละเอียดแต่ละกลุ่มสภาพอากาศ (Cluster Centers)")
+    center_df = pd.DataFrame(centers, columns=features)
+    center_df['Description'] = [desc_map[i] for i in range(len(centers))]
+    st.dataframe(center_df)
+
+    # Use the latest data point to predict cluster and recommend
+    latest_weather = np.array(filtered_df.iloc[-1][features]).reshape(1, -1)
+    cluster_id = kmeans.predict(latest_weather)[0]
+
+    st.write("### สรุปสภาพอากาศล่าสุดและคำแนะนำ")
+    st.write(f"สภาพอากาศล่าสุดจัดอยู่ในกลุ่ม : **{desc_map[cluster_id]}**")
+    st.write(f"**คำแนะนำ :** {advice_map[cluster_id]}")
+
+    # Optional: show historical cluster distribution as bar chart
+    st.write("### การกระจายของกลุ่มสภาพอากาศในช่วงเวลาที่เลือก")
+    cluster_counts = filtered_df['cluster'].value_counts().sort_index()
+    cluster_names = [desc_map.get(i, f"Cluster {i}") for i in cluster_counts.index]
+    st.bar_chart(pd.Series(cluster_counts.values, index=cluster_names))
+
 # Main app logic
 if LAKEFS_AVAILABLE:
     # Load data button
@@ -608,7 +715,7 @@ if LAKEFS_AVAILABLE:
         st.sidebar.header("Data Analysis Options")
         analysis_type = st.sidebar.selectbox(
             "Choose Analysis Type",
-            ["Weather Overview", "Temperature Trends"]
+            ["Weather Overview", "Temperature Trends", "Raw Data", "Smart Weather Analysis"]
         )
         
         # Determine location column
@@ -654,11 +761,17 @@ if LAKEFS_AVAILABLE:
         # Filter data
         filtered_df = filter_data(df, location_col, selected_locations, date_range)
         
+    
         # Show selected analysis
         if analysis_type == "Weather Overview":
             show_weather_overview(filtered_df, location_col, selected_locations)
         elif analysis_type == "Temperature Trends":
             show_temperature_trends(filtered_df)
+        elif analysis_type == "Raw Data":
+            show_data_table(filtered_df)
+        elif analysis_type == "Smart Weather Analysis":
+            show_clustering(filtered_df)
+
     else:
         st.info("👈 Please configure your LakeFS connection settings in the sidebar and click 'Load Data'")
 else:
@@ -699,3 +812,4 @@ if st.checkbox("Show Debug Info", False):
             st.write("Raw dataframe is available in session state")
             st.write("Sample from raw dataframe:")
             st.write(st.session_state['df'].head())
+            
