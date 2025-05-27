@@ -1,4 +1,5 @@
 FROM python:3.11-slim
+
 WORKDIR /app
 
 # Install system dependencies
@@ -9,10 +10,16 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python packages including a specific version of lakefs-client
-# Using version 0.91.0 which should be compatible with lakeFS 1.7.0
-# Adding fsspec and s3fs for remote storage access
-RUN pip install --no-cache-dir streamlit pandas numpy plotly lakefs-client==0.91.0 fsspec s3fs pyarrow
+# ✅ Copy only requirements.txt first
+COPY docker/requirements.txt .
+
+# ✅ Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install lakefs-client
+RUN pip install s3fs
+
+# ✅ Copy the rest of your application code after dependencies are installed
+COPY . .
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
