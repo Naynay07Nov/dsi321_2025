@@ -168,3 +168,14 @@ Path: http://localhost:8503
 
 ตัวอย่างแสดงผลเป็นตาราง 2249 record
 ![image/Screenshot (117).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(117).png)
+
+## K-Means Clustering: การจำแนกกลุ่มข้อมูลสภาพอากาศ
+- นำข้อมูลที่เก็บได้จาก OpenWeatherMap API (ผ่าน Prefect และ LakeFS) มาทำการวิเคราะห์ด้วย K-Means Clustering
+- ใช้ features ได้แก่ temp, humidity, wind speed, precipitation
+- กำหนดจำนวน cluster = 3
+  
+| Cluster    | คำอธิบาย       | คำแนะนำ                                          |
+|------------|----------------|--------------------------------------------------|
+| 0          | ร้อนและชื้น    | ดื่มน้ำมาก ๆ หลีกเลี่ยงกิจกรรมกลางแจ้งช่วงเที่ยง  |
+| 1          | ฝนตกและลมแรง   | พกร่ม สวมเสื้อกันฝน ระวังวัตถุปลิว               |
+| 2          | เย็นและแห้ง    | สวมเสื้อผ้าอบอุ่น ดูแลผิวให้ชุ่มชื้น               |
