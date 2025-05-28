@@ -160,8 +160,11 @@ Path: http://localhost:8001
 
 Path: http://localhost:8503
 
+ตัวอย่าง Streamlit Dashboard
 ![image/Screenshot (125).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(125).png)
 ![image/Screenshot (122).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(122).png)
 ![image/Screenshot (123).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(123).png)
 ![image/Screenshot (124).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(124).png)
+
+ตัวอย่างแสดงผลเป็นตาราง 2249 record
 ![image/Screenshot (117).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(117).png)
