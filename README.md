@@ -142,6 +142,8 @@ __4.1 ตัวชี้วัดด้านเทคนิค (Technical KPIs)
 Path: http://localhost:8001
 
 ตัวอย่างข้อมูลที่เก็บบน LakeFS
+![image/Screenshot (129).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(129).png)
+![image/Screenshot (131).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(131).png)
 ![image](https://github.com/user-attachments/assets/850a5fdb-9dcf-4f05-840b-cd8edd243592)
 
 ## Streamlit: แสดงผลข้อมูลผ่าน Dashboard
