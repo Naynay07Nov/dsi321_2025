@@ -111,3 +111,20 @@ __4.1 ตัวชี้วัดด้านเทคนิค (Technical KPIs)
 | precipitation       | ปริมาณฝน (mm)                                   |
 | day, hour, month, year | รายละเอียดของวันที่และเวลา                       |
 
+## Docker
+เมื่อ setup เสร็จสิ้น หลังจาก clone repo และรัน <code>docker-compose up --build</code>
+
+## Prefect UI (ดูสถานะ Pipeline)
+- Prefect: จัดการ Workflow และ Orchestration
+
+- Prefect agent ทำงานอยู่ใน Docker Container
+
+- Trigger การดึงข้อมูลจาก OpenWeatherMap API ทุก 15 นาที (Scheduler)
+
+- ตรวจสอบการทำงานของ Flow ทุกครั้ง (Monitoring)
+
+- ถ้าเกิด Error หรือ Timeout จะทำการ Retry อัตโนมัติ (Retry Policy)
+
+- บันทึก Log การทำงานและสถานะของแต่ละ Task
+
+- ส่งข้อมูลที่ได้ไปเก็บใน LakeFS (ในรูปแบบ Parquet)
