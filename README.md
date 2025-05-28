@@ -141,4 +141,27 @@ __4.1 ตัวชี้วัดด้านเทคนิค (Technical KPIs)
 
 Path: http://localhost:8001
 
+ตัวอย่างข้อมูลที่เก็บบน LakeFS
+![image](https://github.com/user-attachments/assets/850a5fdb-9dcf-4f05-840b-cd8edd243592)
 
+## Streamlit: แสดงผลข้อมูลผ่าน Dashboard
+
+- ดึงข้อมูล Parquet ที่เก็บอยู่ใน LakeFS มาประมวลผลและแสดงผล
+
+- แสดงผลข้อมูลสภาพอากาศในรูปแบบ:
+
+  - กราฟ (เช่น Line chart, Bar chart) สำหรับอุณหภูมิ, ความชื้น, ฝน ฯลฯ
+
+  - ตารางข้อมูล (Data Table) สำหรับดูข้อมูลแบบละเอียด
+
+  - ตัวเลือก Filter เช่น วันที่, จังหวัด, สถานที่
+    
+  - รองรับการ Refresh ข้อมูลแบบ Real-time หรือกำหนดช่วงเวลา
+
+Path: http://localhost:8503
+
+![image/Screenshot (125).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(125).png)
+![image/Screenshot (122).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(122).png)
+![image/Screenshot (123).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(123).png)
+![image/Screenshot (124).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(124).png)
+![image/Screenshot (117).png](https://github.com/Naynay07Nov/dsi321_2025/blob/main/image/Screenshot%20(117).png)
